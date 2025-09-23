@@ -23,7 +23,7 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
         # If the name is longer than 32 chars, shorten deterministically
         if [ ${#GROUP_NAME} -gt 32 ]; then
             # Keep first 24 chars, append 8-char hash to avoid collisions
-            GRPNM=$(echo "$GROUP_NAME" | cut -c1-24)$(echo -n "$GROUP_NAME" | md5sum | cut -c1-8)
+            GRPNM=$(echo "$GROUP_NAME" | cut -c1-29)
         else
             GRPNM=$GROUP_NAME
         fi
