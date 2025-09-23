@@ -18,11 +18,17 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
     # Create Groups
     for gid in $GASPAR_SUPG; do
         GROUP_NAME=$(ldapsearch -LLL -H ldap://scoldap.epfl.ch -x -b ou=groups,o=epfl,c=ch \(gidNumber=$gid\) cn | egrep ^cn | awk '{ print $2 }')
+        # ensure group name ≤ 32 chars (prefix + hash if needed)
+        if [ ${#GROUP_NAME} -gt 32 ]; then
+            GRPNM=$(echo "$GROUP_NAME" | cut -c1-20)$(echo "$GROUP_NAME" | md5sum | cut -c1-8)
+        else
+            GRPNM=$GROUP_NAME
+        fi
         if ! getent group $GROUP_NAME > /dev/null 2>&1; then
             GRPNM=$(ldapsearch -LLL -H ldap://scoldap.epfl.ch -x -b ou=groups,o=epfl,c=ch \(gidNumber=$gid\) cn | egrep ^cn | awk '{ print $2 }')
             groupadd -g $gid $GRPNM
         else
-            groupmod -g $gid $GROUP_NAME
+            groupmod -g $gid $GRPNM
         fi
     done
 
