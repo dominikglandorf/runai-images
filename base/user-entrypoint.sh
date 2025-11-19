@@ -6,7 +6,7 @@ set -e
 service ssh start
 
 # Setup GASPAR USER
-GASPAR_USER=$(awk -F '-' '{ print $3 }' /var/run/secrets/kubernetes.io/serviceaccount/namespace)
+GASPAR_USER=glandorf
 
 if ! id -u $GASPAR_USER > /dev/null 2>&1; then
     echo "**** Creating GASPAR USER ****"
@@ -36,24 +36,7 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
         fi
     done
 
-    # Create DLAB Home Directory
-    # First determine where the scratch is mounted
-    SCRATCH=dlabscratch1
-    if [ -d "/dlabscratch1/$SCRATCH" ]; then
-        # Mounted on /dlabscratch1/$SCRATCH -> set home and do nothing
-        USER_HOME=/dlabscratch1/$SCRATCH/$GASPAR_USER
-    else if [ -d "/mnt/$SCRATCH" ]; then
-        # Mounted on /mnt/$SCRATCH -> symlink to /dlabscratch1
-        ln -s /mnt/$SCRATCH /dlabscratch1
-        USER_HOME=/$SCRATCH/$GASPAR_USER
-    else if [ -d "/$SCRATCH/$GASPAR_USER" ]; then
-        # Mounted on /$SCRATCH/$GASPAR_USER -> do nothing
-        USER_HOME=/$SCRATCH/$GASPAR_USER
-    else
-        # No scratch mounted -> create home in /home
-        USER_HOME=/home/${GASPAR_USER}
-        mkdir -p $USER_HOME
-    fi fi fi
+    USER_HOME=/mnt/glandorf
 
     # Create User and add to groups
     useradd -u ${GASPAR_UID} -d $USER_HOME -s /bin/bash ${GASPAR_USER} -g ${GASPAR_GID}     
