@@ -6,7 +6,7 @@ set -e
 service ssh start
 
 # Setup GASPAR USER
-GASPAR_USER=glandorf
+GASPAR_USER=$(awk -F '-' '{ print $3 }' /var/run/secrets/kubernetes.io/serviceaccount/namespace)
 
 if ! id -u $GASPAR_USER > /dev/null 2>&1; then
     echo "**** Creating GASPAR USER ****"
@@ -36,7 +36,15 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
         fi
     done
 
-    USER_HOME=/mnt/glandorf
+    SCRATCH=scratch
+    if [ -d "/mnt/$SCRATCH" ]; then
+        # Mounted on /dlabscratch1/$SCRATCH -> set home and do nothing
+        USER_HOME=/mnt/$SCRATCH/$GASPAR_USER
+    else
+        # No scratch mounted -> create home in /home
+        USER_HOME=/home/${GASPAR_USER}
+        mkdir -p $USER_HOME
+    fi
 
     # Create User and add to groups
     useradd -u ${GASPAR_UID} -d $USER_HOME -s /bin/bash ${GASPAR_USER} -g ${GASPAR_GID}     
@@ -59,10 +67,8 @@ fi
 
 # Find correct USER_HOME if it's undefined
 if [ -z "$USER_HOME" ]; then
-    if [ -d "/dlabscratch1/$GASPAR_USER" ]; then
-        USER_HOME="/dlabscratch1/$GASPAR_USER"
-    elif [ -d "/mnt/dlabscratch1/$GASPAR_USER" ]; then
-        USER_HOME="/mnt/dlabscratch1/$GASPAR_USER"
+    if [ -d "/mnt/scratch/$GASPAR_USER" ]; then
+        USER_HOME="/mnt/scratch/$GASPAR_USER"
     elif [ -d "/home/$GASPAR_USER" ]; then
         USER_HOME="/home/$GASPAR_USER"
     else
