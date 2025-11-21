@@ -13,6 +13,7 @@ RUN apt-get update && \
     htop \
     libgl1 \
     libglib2.0-0 \
+    nano \
     ncdu \
     tree \
     openssh-client \

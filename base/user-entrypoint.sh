@@ -36,10 +36,10 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
         fi
     done
 
-    SCRATCH=scratch
-    if [ -d "/mnt/$SCRATCH" ]; then
+    SCRATCH=data
+    if [ -d "/$SCRATCH" ]; then
         # Mounted on /dlabscratch1/$SCRATCH -> set home and do nothing
-        USER_HOME=/mnt/$SCRATCH/$GASPAR_USER
+        USER_HOME=/$SCRATCH/$GASPAR_USER
     else
         # No scratch mounted -> create home in /home
         USER_HOME=/home/${GASPAR_USER}
@@ -79,10 +79,6 @@ fi
 
 echo "USER_HOME: $USER_HOME"
 
-# Update existing .bashrc to conditionally run 'dlab' command (otherwise there are annoying errors)
-if su ${GASPAR_USER} -c "[ -f '$USER_HOME/.bashrc' ]"; then
-    su ${GASPAR_USER} -c "sed -i '/^dlab$/c\command -v dlab >/dev/null 2>&1 && dlab' '$USER_HOME/.bashrc'"
-fi
 
 if [ -z "$1" ]; then
     exec gosu ${GASPAR_USER} /bin/bash -c "source ~/.bashrc && exec /bin/bash"
