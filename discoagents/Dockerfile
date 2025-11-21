@@ -5,11 +5,17 @@ USER root
 # Install system dependencies, and SSH server
 RUN apt-get update && \
    apt-get install -y  --no-install-recommends  \
-        wget bzip2 ca-certificates \
+        curl \
+        gcc \
+        git  \
+        gosu \
+        nano \
+        wget ca-certificates \
         libglib2.0-0 libxext6 libsm6 libxrender1 \
-        git mercurial subversion screen \
+        
         sudo build-essential curl \
-        libcurl4-openssl-dev libssl-dev \
+        libcurl4-openssl-dev  \
+        tmux \
         zip unzip openssh-server zsh \
         libgl1-mesa-glx pkg-config
 
