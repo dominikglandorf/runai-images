@@ -1,9 +1,10 @@
+### discoagents
 export TAG=registry.rcp.epfl.ch/ml4ed/glandorf/discoagents:latest 
 
 rdj da \
-&& docker build --platform=linux/amd64 -f discoagents/Dockerfile . -t $TAG \
+&& docker build --platform linux/amd64 discoagents/. -t $TAG \
 && docker push $TAG \
-&& runai submit da -i $TAG --pvc ml4ed-scratch:/data --interactive --gpu-memory 10G 
+&& runai submit da -i $TAG --pvc ml4ed-scratch:/data --interactive 
 
  --cpu 4 --memory 96G --gpu-memory 80G --node-pools default
 default: A100
