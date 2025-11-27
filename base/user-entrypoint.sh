@@ -67,8 +67,8 @@ fi
 
 # Find correct USER_HOME if it's undefined
 if [ -z "$USER_HOME" ]; then
-    if [ -d "/mnt/scratch/$GASPAR_USER" ]; then
-        USER_HOME="/mnt/scratch/$GASPAR_USER"
+    if [ -d "/data/$GASPAR_USER" ]; then
+        USER_HOME="/data/$GASPAR_USER"
     elif [ -d "/home/$GASPAR_USER" ]; then
         USER_HOME="/home/$GASPAR_USER"
     else

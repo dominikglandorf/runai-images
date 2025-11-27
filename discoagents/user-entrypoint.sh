@@ -14,7 +14,7 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
     GASPAR_GID=$(ldapsearch -H ldap://scoldap.epfl.ch -x -b "ou=users,o=epfl,c=ch" "(uid=$GASPAR_USER)" gidNumber | egrep ^gidNumber | awk '{ print $2 }')
     GASPAR_SUPG=$(ldapsearch -LLL -H ldap://scoldap.epfl.ch -x -b ou=groups,o=epfl,c=ch \(memberUid=${GASPAR_USER}\) gidNumber | grep 'gidNumber:' | awk '{ print $2 }' | paste -s -d' ' -)
 
-
+    echo "**** Create groups ****"
     # Create Groups
     for gid in $GASPAR_SUPG; do
         GROUP_NAME=$(ldapsearch -LLL -H ldap://scoldap.epfl.ch -x \
@@ -36,39 +36,35 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
         fi
     done
 
+    # additionally create a user-owned home on the container FS
+    mkdir -p /home/${GASPAR_USER}
+
+    echo "**** Set user_home ****"
     SCRATCH=data
     if [ -d "/$SCRATCH" ]; then
-        # Mounted on /dlabscratch1/$SCRATCH -> set home and do nothing
+        # Mounted on /data/$SCRATCH -> set home and do nothing
         USER_HOME=/$SCRATCH/$GASPAR_USER
+        echo "**** USER_HOME set to $USER_HOME ****"
     else
-        # No scratch mounted -> create home in /home
         USER_HOME=/home/${GASPAR_USER}
-        mkdir -p $USER_HOME
     fi
 
     # Create User and add to groups
     useradd -u ${GASPAR_UID} -d $USER_HOME -s /bin/bash ${GASPAR_USER} -g ${GASPAR_GID}     
     usermod -aG $(echo $GASPAR_SUPG | tr ' ' ',') ${GASPAR_USER}
-    if ! [ -d "$SCRATCH" ]; then
-        chown -R ${GASPAR_USER}:${GASPAR_GID} $USER_HOME
-    fi
+
+    chown -R ${GASPAR_USER}:${GASPAR_GID} /home/${GASPAR_USER}
 
     # passwordless sudo
     echo "${GASPAR_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
     # HACKYYYY: set automatic bash login 
     echo "exec gosu ${GASPAR_USER} /bin/bash" > /root/.bashrc
-
-
-    # .bashrc for user
-    chown ${GASPAR_USER}:${GASPAR_GID} /tmp/.bashrc
-    su ${GASPAR_USER} -c "if [ ! -f "$USER_HOME/.bashrc" ]; then cp /tmp/.bashrc '$USER_HOME/.bashrc'; fi"
 fi
-
 
 # Find correct USER_HOME if it's undefined
 if [ -z "$USER_HOME" ]; then
-    if [ -d "/mnt/scratch/$GASPAR_USER" ]; then
-        USER_HOME="/mnt/scratch/$GASPAR_USER"
+    if [ -d "/data/$GASPAR_USER" ]; then
+        USER_HOME="/data/$GASPAR_USER"
     elif [ -d "/home/$GASPAR_USER" ]; then
         USER_HOME="/home/$GASPAR_USER"
     else
@@ -79,11 +75,6 @@ fi
 
 echo "USER_HOME: $USER_HOME"
 
-if [ -z "$1" ]; then
-    exec gosu ${GASPAR_USER} /bin/bash -c "source ~/.bashrc && exec /bin/bash"
-else
-    echo "**** Executing '/bin/bash -c \"$*\"' ****"
-    exec gosu ${GASPAR_USER} /bin/bash -c "source ~/.bashrc && exec /bin/bash -c \"$*\""
-fi
+gosu ${GASPAR_USER} pip install -r $USER_HOME/disco-agents/requirements.txt
 
-# pip install -r $USER_HOME/disco-agents/requirements.txt
+exec gosu ${GASPAR_USER} /bin/bash -c "$*"
