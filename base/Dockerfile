@@ -47,4 +47,3 @@ COPY base/.bashrc /tmp/.bashrc
 RUN chmod +x /tmp/user-entrypoint.sh
 
 ENTRYPOINT ["/tmp/user-entrypoint.sh"]
-CMD ["/bin/bash"]

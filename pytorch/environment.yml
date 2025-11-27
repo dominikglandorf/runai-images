@@ -16,6 +16,6 @@ dependencies:
   - ipywidgets
   - wandb
   - pytorch::pytorch
-  - pytorch::pytorch-cuda=12.6
+  - pytorch::pytorch-cuda=12.1
   - lovely-tensors
 prefix: "/opt/conda"

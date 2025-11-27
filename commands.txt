@@ -6,6 +6,15 @@ rdj da \
 && docker push $TAG \
 && runai submit da -i $TAG --pvc ml4ed-scratch:/data --interactive 
 
+### ML
+export BASE_TAG=registry.rcp.epfl.ch/ml4ed/glandorf/dlab-base
+docker build --platform linux/amd64 -f base/Dockerfile . -t $BASE_TAG
+
+export TAG=registry.rcp.epfl.ch/ml4ed/glandorf/mlc:latest 
+docker build --platform linux/amd64 -f pytorch/Dockerfile --build-arg BASE_IMAGE=$BASE_TAG . -t $TAG \
+&& docker push $TAG \
+&& runai submit mlc -i $TAG --pvc ml4ed-scratch:/data --interactive 
+
  --cpu 4 --memory 96G --gpu-memory 80G --node-pools default
 default: A100
 v100
