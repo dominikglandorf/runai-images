@@ -6,6 +6,14 @@ rdj da \
 && docker push $TAG \
 && runai submit da -i $TAG --pvc ml4ed-scratch:/data --interactive 
 
+### deep-srl
+export TAG=registry.rcp.epfl.ch/ml4ed/glandorf/dsrl:latest 
+
+rdj da \
+&& docker build  --no-cache --platform linux/amd64 deep-srl/. -t $TAG \
+&& docker push $TAG \
+&& runai submit da -i $TAG --pvc ml4ed-scratch:/data --interactive 
+
 ### ML
 export BASE_TAG=registry.rcp.epfl.ch/ml4ed/glandorf/dlab-base
 docker build --platform linux/amd64 -f base/Dockerfile . -t $BASE_TAG
