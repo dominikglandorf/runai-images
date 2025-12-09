@@ -75,6 +75,8 @@ fi
 
 echo "USER_HOME: $USER_HOME"
 
-gosu ${GASPAR_USER} pip install -r $USER_HOME/disco-agents/requirements.txt
+gosu ${GASPAR_USER} python -m venv /home/$GASPAR_USER/.venv --system-site-packages
+gosu ${GASPAR_USER} /home/$GASPAR_USER/.venv/bin/pip install -r $USER_HOME/disco-agents/requirements.txt
+gosu ${GASPAR_USER} /home/$GASPAR_USER/.venv/bin/python -m ipykernel install --name ".venv" --user
 
 exec gosu ${GASPAR_USER} /bin/bash -c "$*"

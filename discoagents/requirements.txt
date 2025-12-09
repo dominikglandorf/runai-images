@@ -1,0 +1,12 @@
+accelerate==1.11.0
+altair==6.0.0
+flask==3.1.2
+huggingface_hub==0.36.0
+ipykernel==7.1.0
+jupyter==1.1.1
+openai==2.8.1
+pyautogui==0.9.54
+python_dotenv==1.2.1
+tiktoken==0.12.0
+transformers==4.57.3
+vllm==0.10.2

@@ -1,5 +1,5 @@
 ARG PLATFORM=linux/amd64
-FROM --platform=${PLATFORM} pytorch/pytorch:2.7.1-cuda12.6-cudnn9-devel
+FROM --platform=${PLATFORM} pytorch/pytorch:2.8.0-cuda12.6-cudnn9-devel
 
 USER root
 
@@ -14,6 +14,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends  \
         zip
 
 EXPOSE 22
+
+COPY requirements.txt tmp/requirements.txt
+RUN /opt/conda/bin/python -m pip install --upgrade pip
+RUN /opt/conda/bin/pip install -r tmp/requirements.txt
 
 COPY user-entrypoint.sh /tmp/user-entrypoint.sh
 RUN chmod +x /tmp/user-entrypoint.sh

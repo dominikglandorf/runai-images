@@ -4,15 +4,15 @@ export TAG=registry.rcp.epfl.ch/ml4ed/glandorf/discoagents:latest
 rdj da \
 && docker build --platform linux/amd64 discoagents/. -t $TAG \
 && docker push $TAG \
-&& runai submit da -i $TAG --pvc ml4ed-scratch:/data --interactive 
+&& runai submit da -i $TAG --pvc ml4ed-scratch:/data --interactive --gpu 0.5
 
 ### deep-srl
 export TAG=registry.rcp.epfl.ch/ml4ed/glandorf/dsrl:latest 
 
-rdj da \
+rdj dsrl \
 && docker build  --no-cache --platform linux/amd64 deep-srl/. -t $TAG \
 && docker push $TAG \
-&& runai submit da -i $TAG --pvc ml4ed-scratch:/data --interactive 
+&& runai submit dsrl -i $TAG --pvc ml4ed-scratch:/data --interactive 
 
 ### ML
 export BASE_TAG=registry.rcp.epfl.ch/ml4ed/glandorf/dlab-base
