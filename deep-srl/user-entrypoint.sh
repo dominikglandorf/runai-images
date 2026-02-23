@@ -57,8 +57,6 @@ if ! id -u $GASPAR_USER > /dev/null 2>&1; then
 
     # passwordless sudo
     echo "${GASPAR_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-    # HACKYYYY: set automatic bash login 
-    echo "exec gosu ${GASPAR_USER} /bin/bash" > /root/.bashrc
 fi
 
 # Find correct USER_HOME if it's undefined
@@ -75,6 +73,10 @@ fi
 
 echo "USER_HOME: $USER_HOME"
 
-gosu ${GASPAR_USER} pip install -r $USER_HOME/dsrl/requirements.txt
+REQ="$USER_HOME/dsrl/requirements.txt"
+
+if [ -f "$REQ" ]; then
+    pip install -r "$REQ"
+fi
 
 exec gosu ${GASPAR_USER} /bin/bash -c "$*"
