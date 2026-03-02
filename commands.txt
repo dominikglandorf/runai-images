@@ -27,3 +27,12 @@ docker build --platform linux/amd64 -f pytorch/Dockerfile --build-arg BASE_IMAGE
 default: A100
 v100
 h100 no quota for it
+
+
+### anoush, writing process, wp
+export TAG=registry.rcp.epfl.ch/ml4ed/glandorf/wp:latest 
+
+rdj wp \
+&& docker build  --no-cache --platform linux/amd64 writing-process/. -t $TAG \
+&& docker push $TAG \
+&& runai submit wp -i $TAG --pvc ml4ed-scratch:/data --interactive 

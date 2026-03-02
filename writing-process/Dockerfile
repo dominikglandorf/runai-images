@@ -14,8 +14,7 @@ RUN set -eux; \
         nano \
         openssh-server \ 
         zip \
-        sudo \
-        postgresql-client
+        sudo
 
 EXPOSE 22
 
