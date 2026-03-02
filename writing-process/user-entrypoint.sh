@@ -73,10 +73,12 @@ fi
 
 echo "USER_HOME: $USER_HOME"
 
-REQ="$USER_HOME/anoush-spring-26/requirements.txt"
-
+USER_HOME=$USER_HOME gosu ${GASPAR_USER} bash -c 'REQ="$USER_HOME/anoush-spring-26/requirements.txt"
+echo [ -f "$REQ" ]
 if [ -f "$REQ" ]; then
+    echo "**** Installing requirements from $REQ ****"
     pip install -r "$REQ"
-fi
+    pip install -e "$USER_HOME/anoush-spring-26/."
+fi'
 
 exec gosu ${GASPAR_USER} /bin/bash -c "$*"

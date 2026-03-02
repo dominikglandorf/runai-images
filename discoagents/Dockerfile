@@ -4,7 +4,9 @@ FROM --platform=${PLATFORM} pytorch/pytorch:2.8.0-cuda12.6-cudnn9-devel
 USER root
 
 # Install system dependencies, and SSH server
-RUN apt-get update && apt-get install -y --no-install-recommends  \
+RUN set -eux; \
+    sed -i 's|http://|https://|g' /etc/apt/sources.list; \
+    apt-get update && apt-get install -y --no-install-recommends  \
         curl \
         git  \
         gosu \

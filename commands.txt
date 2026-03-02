@@ -35,4 +35,4 @@ export TAG=registry.rcp.epfl.ch/ml4ed/glandorf/wp:latest
 rdj wp \
 && docker build  --no-cache --platform linux/amd64 writing-process/. -t $TAG \
 && docker push $TAG \
-&& runai submit wp -i $TAG --pvc ml4ed-scratch:/data --interactive 
+&& runai submit wp -i $TAG --pvc ml4ed-scratch:/data --interactive

@@ -14,7 +14,8 @@ RUN set -eux; \
         nano \
         openssh-server \ 
         zip \
-        sudo
+        sudo \
+        ffmpeg
 
 EXPOSE 22
 
