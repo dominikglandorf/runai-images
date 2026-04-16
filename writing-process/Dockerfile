@@ -22,7 +22,7 @@ EXPOSE 22
 COPY requirements.txt tmp/requirements.txt
 RUN /opt/conda/bin/python -m pip install --upgrade pip
 RUN /opt/conda/bin/pip install -r tmp/requirements.txt
-RUN chmod -R 777 /opt/conda/bin/ /opt/conda/lib/ 
+RUN chmod -R 777 /opt/conda/bin/ /opt/conda/lib/ /opt/conda/share/ /opt/conda/etc/
 
 COPY user-entrypoint.sh /tmp/user-entrypoint.sh
 RUN chmod +x /tmp/user-entrypoint.sh
